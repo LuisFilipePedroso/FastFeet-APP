@@ -5,12 +5,13 @@ export const Container = styled.View`
   background-color: #ffffff;
   border-radius: 4px;
   box-shadow: 1px 1px 3px #0000001a;
+  margin-bottom: 50px;
 `;
 
 export const TitleWrapper = styled.View`
   flex-direction: row;
   align-items: center;
-  padding: 5px;
+  padding: 10px;
 `;
 
 export const Title = styled.Text<{ fontSize: number; color: string }>`
@@ -19,8 +20,6 @@ export const Title = styled.Text<{ fontSize: number; color: string }>`
   font-weight: bold;
   margin-left: 10px;
 `;
-
-export const StepItem = styled.View<{ accomplished: string }>``;
 
 export const DeliveryDetail = styled.View`
   flex-direction: row;
@@ -39,7 +38,7 @@ export const DetailColumn = styled.View``;
 export const Text = styled.Text<{
   fontSize: number;
   color: string;
-  bold: boolean;
+  bold?: boolean;
 }>`
   color: ${({ color }) => color};
   font-size: ${({ fontSize }) => `${fontSize}px`};

@@ -22,8 +22,8 @@ export const ButtonsWrapper = styled.View`
 `;
 
 export const Button = styled.TouchableOpacity<{ isActive: boolean }>`
-  ${({ active }) =>
-    active === true &&
+  ${({ isActive }) =>
+    isActive === true &&
     css`
       border-bottom-width: 1px;
       border-style: solid;
@@ -40,8 +40,8 @@ export const Text = styled.Text<{ isActive: boolean }>`
   font-weight: bold;
   color: #999999;
 
-  ${({ active }) =>
-    active === true &&
+  ${({ isActive }) =>
+    isActive === true &&
     css`
       color: #7d40e7;
     `}

@@ -1,12 +1,20 @@
-import React, { useMemo } from 'react';
+import React, {
+  useMemo,
+  memo,
+  useEffect,
+  Dispatch,
+  SetStateAction,
+} from 'react';
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { useNavigation } from '@react-navigation/native';
 import IDelivery from '../../interfaces/Delivery';
+import ILabels from '../../interfaces/Labels';
 
 import { formatDate } from '../../utils/FormatDate';
 import Status from '../../utils/DeliveryStatus';
 
-import { Progress, Step } from '../Progress';
+import Progress from '../Progress';
 
 import {
   Container,
@@ -16,17 +24,19 @@ import {
   Button,
   DetailColumn,
   Text,
-  StepItem,
 } from './styles';
 
 interface IProps {
   data: IDelivery;
+  labels: ILabels[];
+  setLabels: Dispatch<SetStateAction>;
 }
 
-const Delivery = ({ data }: IProps) => {
+const Delivery = ({ data, labels, setLabels, ...other }: IProps) => {
   const formattedDate = useMemo(() => formatDate(data.createdAt), []);
+  const navigation = useNavigation();
 
-  const percent = useMemo(
+  const status = useMemo(
     () =>
       Status({
         startDate: data?.start_date,
@@ -34,6 +44,28 @@ const Delivery = ({ data }: IProps) => {
       }),
     []
   );
+
+  useEffect(() => {
+    const newLabels = labels.map(label => {
+      if (status === 'DONE') {
+        return {
+          ...label,
+          active: true,
+        };
+      }
+
+      if (label.label === status) {
+        return {
+          ...label,
+          active: true,
+        };
+      }
+
+      return label;
+    });
+
+    setLabels(newLabels);
+  }, []);
 
   return (
     <Container>
@@ -43,13 +75,7 @@ const Delivery = ({ data }: IProps) => {
           Encomenda {data.id}
         </Title>
       </TitleWrapper>
-      <Progress percent={50}>
-        <Step>
-          {({ accomplished, index }) => (
-            <StepItem accomplished={String(accomplished)}>{index + 1}</StepItem>
-          )}
-        </Step>
-      </Progress>
+      <Progress percent={50} steps={3} labels={labels} />
       <DeliveryDetail>
         <DetailColumn>
           <Text fontSize={12} color="#999999">
@@ -67,7 +93,9 @@ const Delivery = ({ data }: IProps) => {
             {data.recipient?.city}
           </Text>
         </DetailColumn>
-        <Button>
+        <Button
+          onPress={() => navigation.navigate('Detalhes', { delivery: data })}
+        >
           <Text fontSize={14} color="#7D40E7" bold>
             Ver detalhes
           </Text>
@@ -77,4 +105,4 @@ const Delivery = ({ data }: IProps) => {
   );
 };
 
-export default Delivery;
+export default memo(Delivery);

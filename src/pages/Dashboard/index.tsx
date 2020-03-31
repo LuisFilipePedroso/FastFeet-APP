@@ -1,73 +1,69 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { signOut } from '../../store/modules/auth/actions';
+
 import IDelivery from '../../interfaces/Delivery';
 
 import {
   Container,
   Header,
-  Profile,
-  Image,
-  DefaultImage,
-  DefaultImageText,
   Welcome,
   SmallText,
   Title,
-  Exit,
+  ExitButton,
 } from './styles';
+
+import Avatar from '../../components/Avatar';
+
 import DeliveryList from '../../components/DeliveryList';
 
 import api from '../../services/api';
 
 const Dashboard: React.FC = () => {
-  const { profile: stateProfile } = useSelector(state => state.user);
+  const { profile } = useSelector(state => state.user);
   const [deliveries, setDeliveries] = useState<IDelivery>([]);
-  const [status, setStatus] = useState('pending');
+
+  const dispatch = useDispatch();
+
+  async function fetchDeliveries(status = 'pending') {
+    const response = await api.get(
+      `/deliveryman/${profile.id}/deliveries?status=${status}`
+    );
+
+    setDeliveries(response.data);
+  }
 
   useEffect(() => {
-    async function fetchDeliveries() {
-      const response = await api.get(
-        `/deliveryman/${profile.id}/deliveries?status=${status}`
-      );
-
-      setDeliveries(response.data);
-    }
     fetchDeliveries();
   }, []);
 
-  const profile = useMemo(() => {
-    const acronymName = stateProfile?.name
-      .split(/\s/)
-      .reduce((response, word) => (response += word.slice(0, 1)), '');
-
-    return {
-      ...stateProfile,
-      acronymName: acronymName.replace(/[^A-Z]/g, ''),
-    };
-  }, []);
+  function handleLogout() {
+    dispatch(signOut());
+  }
 
   return (
     <Container>
       <Header>
-        <Profile>
-          {profile?.image?.url ? (
-            <Image source={profile.avatar.url} />
-          ) : (
-            <DefaultImage>
-              <DefaultImageText>{profile.acronymName}</DefaultImageText>
-            </DefaultImage>
-          )}
-        </Profile>
+        <Avatar
+          baseProfile={profile}
+          containerWidth="30%"
+          imageContainerWidth="68px"
+          borderRadius="34px"
+        />
         <Welcome>
           <SmallText>Bem vindo de volta</SmallText>
           <Title>{profile.name}</Title>
         </Welcome>
-        <Exit>
+        <ExitButton onPress={handleLogout}>
           <Icon name="exit-to-app" size={24} color="#E74040" />
-        </Exit>
+        </ExitButton>
       </Header>
-      <DeliveryList deliveries={deliveries} />
+      <DeliveryList
+        deliveries={deliveries}
+        filterDeliveries={fetchDeliveries}
+      />
     </Container>
   );
 };
