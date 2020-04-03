@@ -4,7 +4,7 @@ interface IParams {
 }
 
 // eslint-disable-next-line consistent-return
-export default function({ startDate, endDate }: IParams) {
+export default function({ startDate = null, endDate = null }: IParams) {
   if (startDate !== null && endDate !== null) {
     return 'DONE';
   }

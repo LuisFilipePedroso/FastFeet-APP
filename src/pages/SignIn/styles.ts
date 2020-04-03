@@ -1,6 +1,6 @@
 import styled from 'styled-components/native';
 
-import Input from '../../components/Form/Input';
+import { Input } from '../../components/Form';
 
 export const Container = styled.SafeAreaView`
   flex: 1;

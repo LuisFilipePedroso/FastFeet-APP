@@ -94,7 +94,9 @@ const Delivery = ({ data, labels, setLabels, ...other }: IProps) => {
           </Text>
         </DetailColumn>
         <Button
-          onPress={() => navigation.navigate('Detalhes', { delivery: data })}
+          onPress={() =>
+            navigation.navigate('Detalhes', { deliveryId: data.id })
+          }
         >
           <Text fontSize={14} color="#7D40E7" bold>
             Ver detalhes

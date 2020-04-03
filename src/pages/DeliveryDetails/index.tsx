@@ -1,10 +1,11 @@
-import React, { useMemo } from 'react';
-import { StatusBar } from 'react-native';
+import React, { useState, useMemo, useEffect } from 'react';
+import { StatusBar, Alert } from 'react-native';
 
-import { useRoute } from '@react-navigation/native';
+import { useRoute, useNavigation } from '@react-navigation/native';
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import CommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import api from '~/services/api';
 import IDelivery from '~/interfaces/Delivery';
 import DeliveryStatus from '~/utils/DeliveryStatus';
 import { formatDate } from '~/utils/FormatDate';
@@ -36,27 +37,49 @@ const IStatus = {
 
 const DeliveryDetails = () => {
   const route = useRoute();
-  const { delivery }: { delivery: IDelivery } = route.params;
+  const navigation = useNavigation();
+  const [delivery, setDelivery] = useState<IDelivery>({});
+  const [status, setStatus] = useState<string | null>('');
 
-  const status = useMemo(
-    () =>
-      IStatus[
-        DeliveryStatus({
-          startDate: delivery?.start_date,
-          endDate: delivery?.end_date,
-        })
-      ],
-    []
-  );
+  const { deliveryId } = route.params;
 
-  const formattedStartDate = useMemo(
-    () => (delivery.start_date ? formatDate(delivery.start_date) : '--/--/--'),
-    []
-  );
-  const formattedEndDate = useMemo(
-    () => (delivery.end_date ? formatDate(delivery.end_date) : '--/--/--'),
-    []
-  );
+  async function getDelivery() {
+    const response = await api.get(`/delivery/${deliveryId}`);
+    const data = {
+      ...response.data,
+      formattedStartDate: response.data.start_date
+        ? formatDate(response.data.start_date)
+        : '--/--/--',
+      formattedEndDate: response.data.end_date
+        ? formatDate(response.data.end_date)
+        : '--/--/--',
+    };
+
+    setDelivery(data);
+
+    const formattedStatus = DeliveryStatus({
+      startDate: response.data?.start_date,
+      endDate: response.data?.end_date,
+    });
+
+    const defaultStatus = formattedStatus && IStatus[formattedStatus];
+
+    setStatus(defaultStatus);
+  }
+
+  useEffect(() => {
+    getDelivery();
+  }, []);
+
+  async function initializeDelivery() {
+    try {
+      await api.put(`delivery/${delivery.id}/start`);
+      Alert.alert('Sucesso!', 'Entrega iniciada com sucesso, boa viagem!');
+      await getDelivery();
+    } catch (e) {
+      Alert.alert('Ops', 'Algo de errado aconteceu, tente novamente!');
+    }
+  }
 
   const buttons = [
     {
@@ -64,12 +87,18 @@ const DeliveryDetails = () => {
       title: 'Informar\nProblema',
       icon: <Icon name="highlight-off" size={24} color={colors.danger} />,
       borderRight: true,
+      path: 'Informar Problema',
+      shouldRedirect: true,
+      fn: null,
     },
     {
       id: 1,
       title: 'Visualizar\nProblema',
       icon: <Icon name="info-outline" size={24} color={colors.attention} />,
       borderRight: true,
+      path: 'Visualizar Problemas',
+      shouldRedirect: true,
+      fn: null,
     },
     {
       id: 2,
@@ -88,6 +117,9 @@ const DeliveryDetails = () => {
           />
         ),
       borderRight: true,
+      path: delivery?.start_date !== null && 'Visualizar Problemas',
+      shouldRedirect: delivery?.start_date !== null,
+      fn: () => initializeDelivery(),
     },
   ];
 
@@ -127,11 +159,11 @@ const DeliveryDetails = () => {
           <DatesWrapper>
             <InfoDateWrapper>
               <TitleDescription>Data de retirada</TitleDescription>
-              <InfoText>{formattedStartDate}</InfoText>
+              <InfoText>{delivery.formattedStartDate}</InfoText>
             </InfoDateWrapper>
             <InfoDateWrapper>
               <TitleDescription>Data de entrega</TitleDescription>
-              <InfoText>{formattedEndDate}</InfoText>
+              <InfoText>{delivery.formattedEndDate}</InfoText>
             </InfoDateWrapper>
           </DatesWrapper>
         </DescriptionWrapper>
@@ -140,7 +172,13 @@ const DeliveryDetails = () => {
       <Card height={83} marginTop={11} backgroundColor="#F8F9FD" row noPadding>
         {buttons.map(button => (
           <ButtonWrapper key={button.id} borderRight={button.borderRight}>
-            <Button>
+            <Button
+              onPress={() =>
+                button.shouldRedirect === true
+                  ? navigation.navigate(button.path, { delivery })
+                  : button.fn()
+              }
+            >
               {button.icon}
               <ButtonText>{button.title}</ButtonText>
             </Button>

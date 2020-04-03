@@ -3,4 +3,6 @@ export default interface IDeliveryProblem {
   delivery_id: number;
   shortDescription?: string;
   description: string;
-};
+  createdAt: Date;
+  formattedDate: string;
+}

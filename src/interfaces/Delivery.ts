@@ -21,4 +21,6 @@ export default interface IDelivery {
   deliveryman?: DeliveryMan;
   signature?: File;
   status?: Status;
+  formattedStartDate: string;
+  formattedEndDate: string;
 }
