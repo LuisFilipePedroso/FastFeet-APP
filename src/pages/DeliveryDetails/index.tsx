@@ -117,7 +117,7 @@ const DeliveryDetails = () => {
           />
         ),
       borderRight: true,
-      path: delivery?.start_date !== null && 'Visualizar Problemas',
+      path: delivery?.start_date !== null && 'Confirmar Entrega',
       shouldRedirect: delivery?.start_date !== null,
       fn: () => initializeDelivery(),
     },
