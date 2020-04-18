@@ -34,7 +34,7 @@ export default function createRouter(isSigned = false) {
         style: {
           display: 'flex',
           alignItems: 'center',
-          height: 94,
+          height: 70,
         },
       }}
     >

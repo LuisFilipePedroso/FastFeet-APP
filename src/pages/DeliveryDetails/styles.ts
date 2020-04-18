@@ -61,7 +61,7 @@ export const DatesWrapper = styled.View`
 export const InfoDateWrapper = styled.View``;
 
 export const ButtonWrapper = styled.View<{ borderRight?: boolean }>`
-  width: 125px;
+  width: 112px;
   justify-content: center;
   align-items: center;
 

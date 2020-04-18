@@ -1,6 +1,8 @@
 import styled from 'styled-components/native';
 import { RNCamera } from 'react-native-camera';
 
+import { colors } from '~/styles/global';
+
 export const Container = styled.View`
   flex: 1;
   background-color: #ffffff;
@@ -19,5 +21,19 @@ export const Content = styled.View`
 export const Camera = styled(RNCamera)`
   width: 100%;
   height: 100%;
-  /* align-items: center; */
+`;
+
+export const SubmitButton = styled.TouchableOpacity`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 45px;
+  margin-top: 456px;
+  background-color: ${colors.primary};
+`;
+
+export const SubmitButtonText = styled.Text`
+  font-size: 16px;
+  font-weight: bold;
+  color: #fff;
 `;

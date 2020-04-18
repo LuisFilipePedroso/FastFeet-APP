@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StatusBar, Alert } from 'react-native';
 
 import { useRoute, useNavigation } from '@react-navigation/native';
@@ -75,8 +75,16 @@ const DeliveryDetails = () => {
     try {
       await api.put(`delivery/${delivery.id}/start`);
       Alert.alert('Sucesso!', 'Entrega iniciada com sucesso, boa viagem!');
-      await getDelivery();
+
+      navigation.navigate('Entregas', { refresh: true });
     } catch (e) {
+      const message = e?.response?.data?.error || '';
+
+      if (message.length > 0) {
+        Alert.alert('Ops', message);
+        return;
+      }
+
       Alert.alert('Ops', 'Algo de errado aconteceu, tente novamente!');
     }
   }
@@ -116,7 +124,7 @@ const DeliveryDetails = () => {
             color={colors.primary}
           />
         ),
-      borderRight: true,
+      borderRight: false,
       path: delivery?.start_date !== null && 'Confirmar Entrega',
       shouldRedirect: delivery?.start_date !== null,
       fn: () => initializeDelivery(),

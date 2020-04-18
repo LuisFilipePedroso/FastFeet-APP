@@ -75,7 +75,7 @@ const Delivery = ({ data, labels, setLabels, ...other }: IProps) => {
           Encomenda {data.id}
         </Title>
       </TitleWrapper>
-      <Progress percent={50} steps={3} labels={labels} />
+      <Progress labels={labels} />
       <DeliveryDetail>
         <DetailColumn>
           <Text fontSize={12} color="#999999">

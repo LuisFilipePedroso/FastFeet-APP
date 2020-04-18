@@ -1,7 +1,5 @@
 import styled, { css } from 'styled-components/native';
 
-import IDelivery from '../../interfaces/Delivery';
-
 export const Header = styled.View`
   flex-direction: row;
   justify-content: space-between;

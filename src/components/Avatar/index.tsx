@@ -36,7 +36,10 @@ export default function Avatar({
           height={imageContainerWidth}
           borderRadius={borderRadius}
         >
-          <Image source={{ uri: profile.avatar.url }} />
+          <Image
+            source={{ uri: profile.avatar.url }}
+            borderRadius={borderRadius}
+          />
         </DefaultImage>
       ) : (
         <DefaultImage

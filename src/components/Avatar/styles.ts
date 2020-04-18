@@ -20,8 +20,13 @@ export const DefaultImage = styled.View<{
   border-style: solid;
   border-width: 1px;
   border-color: ${({ backgroundColor }) => backgroundColor || '#e8e8e8'};
-  background-color: ${({ backgroundColor }) =>
-    backgroundColor && backgroundColor};
+
+  ${({ backgroundColor }) =>
+    backgroundColor &&
+    backgroundColor !== '' &&
+    css`
+      background-color: ${backgroundColor};
+    `}
 `;
 
 export const DefaultImageText = styled.Text`
@@ -33,4 +38,5 @@ export const Image = styled.Image`
   width: 100%;
   height: 100%;
   resize-mode: contain;
+  border-radius: ${({ borderRadius }) => borderRadius};
 `;
