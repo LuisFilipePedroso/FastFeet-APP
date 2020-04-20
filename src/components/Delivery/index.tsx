@@ -2,6 +2,7 @@ import React, {
   useMemo,
   memo,
   useEffect,
+  useState,
   Dispatch,
   SetStateAction,
 } from 'react';
@@ -33,8 +34,10 @@ interface IProps {
 }
 
 const Delivery = ({ data, labels, setLabels, ...other }: IProps) => {
-  const formattedDate = useMemo(() => formatDate(data.createdAt), []);
+  const formattedDate = useMemo(() => formatDate(data?.createdAt), []);
   const navigation = useNavigation();
+
+  const [label, setLabel] = useState<ILabels[]>();
 
   const status = useMemo(
     () =>
@@ -47,24 +50,21 @@ const Delivery = ({ data, labels, setLabels, ...other }: IProps) => {
 
   useEffect(() => {
     const newLabels = labels.map(label => {
-      if (status === 'DONE') {
-        return {
-          ...label,
-          active: true,
-        };
-      }
-
       if (label.label === status) {
         return {
           ...label,
           active: true,
+          deliveryId: data?.id,
         };
       }
 
-      return label;
+      return {
+        ...label,
+        deliveryId: data?.id,
+      };
     });
 
-    setLabels(newLabels);
+    setLabel(newLabels);
   }, []);
 
   return (
@@ -75,7 +75,7 @@ const Delivery = ({ data, labels, setLabels, ...other }: IProps) => {
           Encomenda {data.id}
         </Title>
       </TitleWrapper>
-      <Progress labels={labels} />
+      <Progress labels={label} />
       <DeliveryDetail>
         <DetailColumn>
           <Text fontSize={12} color="#999999">

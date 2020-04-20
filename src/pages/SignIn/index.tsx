@@ -1,4 +1,5 @@
 import React, { useRef } from 'react';
+import * as Yup from 'yup';
 
 import { useDispatch } from 'react-redux';
 
@@ -21,8 +22,27 @@ const SignIn: React.FC = () => {
   const dispatch = useDispatch();
   const formRef = useRef(null);
 
-  function handleSubmit(data) {
-    dispatch(signInRequest(data.id));
+  async function handleSubmit(data) {
+    try {
+      formRef.current.setErrors({});
+      const schema = Yup.object().shape({
+        id: Yup.string().required(),
+      });
+
+      await schema.validate(data, {
+        abortEarly: false,
+      });
+
+      dispatch(signInRequest(data.id));
+    } catch (err) {
+      const validationErrors = {};
+      if (err instanceof Yup.ValidationError) {
+        err.inner.forEach(error => {
+          validationErrors[error.path] = error.message;
+        });
+        formRef.current.setErrors(validationErrors);
+      }
+    }
   }
 
   return (

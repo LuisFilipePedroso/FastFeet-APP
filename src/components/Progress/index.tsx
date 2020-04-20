@@ -11,7 +11,7 @@ interface IProps {
 export default function Progress({ labels }: IProps) {
   return (
     <Container>
-      {labels.map(label => (
+      {labels?.map(label => (
         <Test key={label.id}>
           <Step>
             <Indicator active={label.active} />

@@ -34,9 +34,10 @@ const INITIAL_LABELS = [
 interface IProps {
   deliveries: IDelivery[];
   filterDeliveries: (filter: string) => void;
+  refresh: boolean | undefined;
 }
 
-const DeliveryList = ({ deliveries, filterDeliveries }: IProps) => {
+const DeliveryList = ({ deliveries, filterDeliveries, refresh }: IProps) => {
   const [active, setActive] = useState('pending');
   const [labels, setLabels] = useState(INITIAL_LABELS);
 
@@ -48,6 +49,8 @@ const DeliveryList = ({ deliveries, filterDeliveries }: IProps) => {
     setActive(filter);
     return filterDeliveries(filter);
   }
+
+  console.log(refresh);
 
   return (
     <>
@@ -75,6 +78,7 @@ const DeliveryList = ({ deliveries, filterDeliveries }: IProps) => {
       <FlatList
         data={deliveries}
         keyExtractor={item => String(item.id)}
+        extraData={refresh === true}
         renderItem={({ item }) => (
           <Delivery data={item} labels={labels} setLabels={setLabels} />
         )}

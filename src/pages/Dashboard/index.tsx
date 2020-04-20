@@ -30,7 +30,7 @@ const Dashboard: React.FC = () => {
   const route = useRoute();
   const dispatch = useDispatch();
 
-  const refresh = (route as any).params?.refresh;
+  const [refresh, setRefresh] = useState<boolean | undefined>(undefined);
 
   async function fetchDeliveries(status = 'pending') {
     const response = await api.get(
@@ -41,9 +41,13 @@ const Dashboard: React.FC = () => {
   }
 
   useEffect(() => {
+    setRefresh((route as any).params?.refresh);
+  }, [(route as any).params?.refresh]);
+
+  useEffect(() => {
     async function handleOnRefresh() {
       await fetchDeliveries();
-      (route as any).params.refresh = undefined;
+      setRefresh(undefined);
     }
 
     if (refresh && refresh === true) {
@@ -70,7 +74,7 @@ const Dashboard: React.FC = () => {
         />
         <Welcome>
           <SmallText>Bem vindo de volta</SmallText>
-          <Title>{profile.name}</Title>
+          <Title>{profile?.name}</Title>
         </Welcome>
         <ExitButton onPress={handleLogout}>
           <Icon name="exit-to-app" size={24} color="#E74040" />
@@ -79,6 +83,7 @@ const Dashboard: React.FC = () => {
       <DeliveryList
         deliveries={deliveries}
         filterDeliveries={fetchDeliveries}
+        refresh={refresh}
       />
     </Container>
   );
