@@ -24,6 +24,7 @@ For this project, we are using:
   <li>Date-fns</li>
   <li>Typescript</li>
   <li>React Native Camera</li>
+  <li>Yup</li>
 </ul>
 
 ## Running the project
